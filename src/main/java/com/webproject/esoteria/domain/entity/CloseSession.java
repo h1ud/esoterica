@@ -1,20 +1,19 @@
 package com.webproject.esoteria.domain.entity;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class SaleDetail {
-    
+public class CloseSession {
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    private int quantity;
-    private double price;
-
-    //fk from id_product
-    //fk from id_sale_operation
+    private Date emission_date;
+    private double total;
 }
