@@ -8,20 +8,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class User {
+public class Product {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
-
-    private String username;
-    private String password_hash;
-    private String name;
-    private String last_name;
-
-    private Date create_date;
-
-    //fk from Role.java
     
-
+    private String product_name;
+    private double price;
+    private Date activation;
+    private Date expiration;
 }
