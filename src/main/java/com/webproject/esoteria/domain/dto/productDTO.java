@@ -1,5 +1,6 @@
 package com.webproject.esoteria.domain.dto;
-
+import lombok.Data;
+@Data
 public class productDTO {
     private String product_name;
     private double price;
