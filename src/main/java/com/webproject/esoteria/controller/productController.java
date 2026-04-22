@@ -16,12 +16,23 @@ public class productController {
     private productService productService;
 
      @PostMapping
-    public ResponseEntity<productDTO> guardar(@RequestBody productDTO productDTO) {
-         productDTO nuevoProducto = productService.crearProduct(productDTO);
+    public ResponseEntity<productDTO> makeProduct(@RequestBody productDTO productDTO) {
+         productDTO nuevoProducto = productService.make(productDTO);
          return ResponseEntity.ok(nuevoProducto);
      }
      @GetMapping
-    public ResponseEntity<List<Product>> buscarProducto(Long id) {
-         return ResponseEntity.ok(productService.listarTodo());
+    public ResponseEntity<List<productDTO>> listProduct() {
+         return ResponseEntity.ok(productService.listAll());
      }
+     @GetMapping("/{id}")
+     public ResponseEntity<productDTO> searchProduct(@PathVariable Long id) {
+         productDTO product = productService.search(id);
+         return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
+     }
+    @DeleteMapping("/{id}")
+     public ResponseEntity<productDTO> deleteProduct(@PathVariable Long id) {
+         productDTO productoEliminado = productService.delete(id);
+         return productoEliminado != null ? ResponseEntity.ok(productoEliminado) : ResponseEntity.notFound().build();
+     }
+
 }
