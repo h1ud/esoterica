@@ -4,6 +4,7 @@ import com.webproject.esoteria.domain.dto.productDTO;
 import com.webproject.esoteria.domain.entity.Product;
 import com.webproject.esoteria.domain.mapper.productMapper;
 import com.webproject.esoteria.service.productService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class productController {
     private productService productService;
 
      @PostMapping
-    public ResponseEntity<productDTO> makeProduct(@RequestBody productDTO productDTO) {
+    public ResponseEntity<productDTO> makeProduct(@Valid @RequestBody productDTO productDTO) {
          productDTO nuevoProducto = productService.make(productDTO);
          return ResponseEntity.ok(nuevoProducto);
      }
@@ -35,7 +36,7 @@ public class productController {
          return productoEliminado != null ? ResponseEntity.ok(productoEliminado) : ResponseEntity.notFound().build();
      }
     @PutMapping("/{id}")
-    public ResponseEntity<productDTO> updateProduct(@PathVariable Long id, @RequestBody productDTO dto){
+    public ResponseEntity<productDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody productDTO dto){
         productDTO updatedProduct = productService.update(id, dto);
         return updatedProduct != null
                 ? ResponseEntity.ok(updatedProduct)

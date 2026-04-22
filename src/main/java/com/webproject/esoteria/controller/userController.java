@@ -3,6 +3,7 @@ package com.webproject.esoteria.controller;
 import com.webproject.esoteria.domain.dto.userDTO;
 import com.webproject.esoteria.domain.entity.Username;
 import com.webproject.esoteria.service.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class userController {
     private userService userService;
 
     @PostMapping
-    public ResponseEntity<userDTO> saveUser(@RequestBody userDTO user){
+    public ResponseEntity<userDTO> saveUser(@Valid @RequestBody userDTO user){
         return ResponseEntity.ok(userService.create(user));
     }
 
@@ -30,7 +31,7 @@ public class userController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<userDTO> updateUser(@PathVariable Long id, @RequestBody userDTO userDTO) {
+    public ResponseEntity<userDTO> updateUser(@PathVariable Long id, @Valid @RequestBody userDTO userDTO) {
             userDTO updatedUser = userService.update(id, userDTO);
             return updatedUser != null
                     ? ResponseEntity.ok(updatedUser)
