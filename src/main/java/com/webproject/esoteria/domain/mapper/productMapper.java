@@ -8,5 +8,5 @@ import org.mapstruct.*;
 public interface productMapper {
    Product toEntity(productDTO dto);
    productDTO toDto(Product entity);
-    void updateProductFromDto(productDTO dto, Product entity);
+   void updateProductFromDto(productDTO dto, @MappingTarget Product entity);
 }

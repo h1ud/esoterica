@@ -5,10 +5,11 @@ import com.webproject.esoteria.domain.entity.Username;
 import com.webproject.esoteria.domain.mapper.userMapper;
 import com.webproject.esoteria.repository.usuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public class userService {
 
     @Autowired
