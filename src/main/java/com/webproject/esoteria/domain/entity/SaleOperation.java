@@ -1,11 +1,16 @@
 package com.webproject.esoteria.domain.entity;
 
 import java.sql.Date;
+import java.util.List;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class SaleOperation {
@@ -16,5 +21,11 @@ public class SaleOperation {
 
     private Date issue_date;
 
-    //fk from User.java
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private Username username;
+
+    @OneToMany(mappedBy = "saleOperation")
+    private List<SaleDetail> saleDetails;
+    
 }
