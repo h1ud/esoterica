@@ -1,6 +1,6 @@
 package com.webproject.esoteria.domain.entity;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -30,10 +30,10 @@ public class Username {
     @JoinColumn(name="role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "username")
     private List<CloseSession> closeSessions;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "username")
     private List<SaleOperation> saleOperations;
 
 
