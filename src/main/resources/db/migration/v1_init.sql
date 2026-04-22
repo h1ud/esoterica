@@ -11,5 +11,6 @@ CREATE TABLE USERNAME(
     last_name VARCHAR(40)
     create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     role_id INTEGER,
+    asda
 
 )
