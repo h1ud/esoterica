@@ -9,5 +9,4 @@ public class EsoteriaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EsoteriaApplication.class, args);
 	}
-
 }

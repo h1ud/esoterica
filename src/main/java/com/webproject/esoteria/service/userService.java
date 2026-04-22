@@ -15,6 +15,7 @@ public class userService {
 
     // Reemplazo de uso de repositorio por almacenamiento en memoria
     private final Map<Long, userDTO> store = new ConcurrentHashMap<>();
+    private final Map<String, Long> usernameToId = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @PostConstruct
@@ -36,9 +37,19 @@ public class userService {
 
     public userDTO create(userDTO dto) {
         long id = idGenerator.getAndIncrement();
+        dto.setId(id);
         dto.setCreate_date(new Date());
-        store.put(id, cloneDto(dto));
-        return cloneDto(dto);
+        userDTO stored = cloneDto(dto);
+        stored.setId(id);
+        store.put(id, stored);
+        if (dto.getUsername() != null) {
+            usernameToId.put(dto.getUsername(), id);
+        }
+        return cloneDto(stored);
+    }
+
+    public Long getIdByUsername(String username) {
+        return usernameToId.get(username);
     }
 
     public userDTO getById(Long id) {
@@ -48,6 +59,7 @@ public class userService {
 
     public userDTO delete(Long id) {
         userDTO removed = store.remove(id);
+        if (removed != null && removed.getUsername() != null) usernameToId.remove(removed.getUsername());
         return removed != null ? cloneDto(removed) : null;
     }
 
@@ -59,18 +71,26 @@ public class userService {
             existing.setFirst_name(dto.getFirst_name() != null ? dto.getFirst_name() : existing.getFirst_name());
             existing.setLast_name(dto.getLast_name() != null ? dto.getLast_name() : existing.getLast_name());
             // no tocar create_date salvo que se necesite
+            if (existing.getUsername() != null) usernameToId.put(existing.getUsername(), id);
             return existing;
         }) != null ? cloneDto(store.get(id)) : null;
     }
 
     public List<userDTO> listAll(){
-        return store.values().stream().map(this::cloneDto).toList();
+        return store.entrySet().stream()
+                .map(e -> {
+                    userDTO c = cloneDto(e.getValue());
+                    c.setId(e.getKey());
+                    return c;
+                })
+                .toList();
     }
 
     // Helper para evitar compartir referencias mutables
     private userDTO cloneDto(userDTO src) {
         if (src == null) return null;
         userDTO copy = new userDTO();
+        copy.setId(src.getId());
         copy.setUsername(src.getUsername());
         copy.setPassword_hash(src.getPassword_hash());
         copy.setFirst_name(src.getFirst_name());

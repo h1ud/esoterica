@@ -7,11 +7,10 @@ import java.util.Date;
 @Data
 public class userDTO {
 
-
+    private Long id;
     private String username;
     private String password_hash;
     private String first_name;
     private String last_name;
-
     private Date create_date;
 }

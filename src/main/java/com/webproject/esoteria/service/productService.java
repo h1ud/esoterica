@@ -34,22 +34,37 @@ public class productService {
 
     public productDTO make(productDTO dto) {
         long id = idGenerator.getAndIncrement();
-        // guardar copia para evitar aliasing
+        // guardar copia para evitar aliasing y establecer id
         productDTO copy = copyDto(dto);
+        copy.setId(id);
         store.put(id, copy);
         return copyDto(copy);
     }
 
     public List<productDTO> listAll() {
-        return store.values().stream().map(this::copyDto).toList();
+        return store.entrySet().stream()
+                .map(e -> {
+                    productDTO c = copyDto(e.getValue());
+                    c.setId(e.getKey());
+                    return c;
+                })
+                .toList();
     }
 
     public productDTO search(Long id) {
-        return copyDto(store.get(id));
+        productDTO found = store.get(id);
+        if (found == null) return null;
+        productDTO c = copyDto(found);
+        c.setId(id);
+        return c;
     }
 
     public productDTO delete(Long id) {
-        return copyDto(store.remove(id));
+        productDTO removed = store.remove(id);
+        if (removed == null) return null;
+        productDTO c = copyDto(removed);
+        c.setId(id);
+        return c;
     }
 
     public productDTO update(Long id, productDTO dto) {
@@ -59,14 +74,18 @@ public class productService {
             existing.setActivation(dto.getActivation() != null ? dto.getActivation() : existing.getActivation());
             existing.setExpiration(dto.getExpiration() != null ? dto.getExpiration() : existing.getExpiration());
             return existing;
-        }) != null ? copyDto(store.get(id)) : null;
+        }) != null ? search(id) : null;
     }
 
     public List<productDTO> searchByName(String name) {
         String lower = name == null ? "" : name.toLowerCase();
-        return store.values().stream()
-                .filter(p -> p.getProduct_name() != null && p.getProduct_name().toLowerCase().contains(lower))
-                .map(this::copyDto)
+        return store.entrySet().stream()
+                .filter(e -> e.getValue().getProduct_name() != null && e.getValue().getProduct_name().toLowerCase().contains(lower))
+                .map(e -> {
+                    productDTO c = copyDto(e.getValue());
+                    c.setId(e.getKey());
+                    return c;
+                })
                 .toList();
     }
 
@@ -77,6 +96,7 @@ public class productService {
         c.setPrice(src.getPrice());
         c.setActivation(src.getActivation());
         c.setExpiration(src.getExpiration());
+        c.setId(src.getId());
         return c;
     }
 }
