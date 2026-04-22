@@ -1,14 +1,19 @@
 package com.webproject.esoteria.domain.entity;
 
 import java.sql.Date;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
-public class User {
+public class Username {
+
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -16,12 +21,22 @@ public class User {
 
     private String username;
     private String password_hash;
-    private String name;
+    private String first_name;
     private String last_name;
 
     private Date create_date;
 
-    //fk from Role.java
+    @ManyToOne
+    @JoinColumn(name="role_id")
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<CloseSession> closeSessions;
+
+    @OneToMany(mappedBy = "user")
+    private List<SaleOperation> saleOperations;
+
+
     
 
 }
