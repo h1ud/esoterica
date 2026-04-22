@@ -27,8 +27,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.mapstruct:mapstruct:1.6.3")
+	implementation("org.projectlombok:lombok:1.18.32")
+	annotationProcessor("org.projectlombok:lombok:1.18.32")
 
 	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.projectlombok:lombok:1.18.32")
+	testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")

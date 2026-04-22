@@ -50,4 +50,18 @@ public class productService {
                 .map(productMapper::toDto)
                 .toList();
         }
+
+        public List<productDTO> searchByName(String name) {
+            return productRepository.findByProductNameContainingIgnoreCase(name)
+                    .stream()
+                    .map(productMapper::toDto)
+                    .collect(toList());
+        }
+
+        public List<productDTO> findByProceRange(double min, double max) {
+            return productRepository.findByPriceBetween(min, max)
+                    .stream()
+                    .map(productMapper::toDto)
+                    .collect(toList());
+        }
 }
