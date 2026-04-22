@@ -31,7 +31,7 @@ public class Username {
     private LocalDateTime create_date;
 
     @ManyToOne
-    @JoinColumn(name="role_id")
+    @JoinColumn(name="role_id",nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "username")
@@ -41,6 +41,12 @@ public class Username {
     private List<SaleOperation> saleOperations;
 
 
-    
-
+    public Username(String username, String passwordHash, String firstName, String lastName, Role role) {
+        this.username = username;
+        this.password_hash = passwordHash;
+        this.first_name = firstName;
+        this.last_name = lastName;
+        this.role = role;
+        this.create_date = LocalDateTime.now();
+    }
 }

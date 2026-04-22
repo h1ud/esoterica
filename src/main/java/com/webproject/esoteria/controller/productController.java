@@ -1,8 +1,6 @@
 package com.webproject.esoteria.controller;
 
 import com.webproject.esoteria.domain.dto.productDTO;
-import com.webproject.esoteria.domain.entity.Product;
-import com.webproject.esoteria.domain.mapper.productMapper;
 import com.webproject.esoteria.service.productService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

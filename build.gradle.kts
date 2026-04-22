@@ -24,7 +24,11 @@ dependencies {
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+<<<<<<< HEAD
 	//implementation("org.springframework.boot:spring-boot-starter-security")
+=======
+	//implementation("org.springframework.boot:spring-boot-starter-security")//
+>>>>>>> 49a7db7 (role-implements)
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.mapstruct:mapstruct:1.6.3")
 
@@ -32,7 +36,7 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	//testImplementation("org.springframework.boot:spring-boot-starter-security-test")//
 	testCompileOnly("org.projectlombok:lombok")
 	testAnnotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")

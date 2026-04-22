@@ -1,7 +1,6 @@
 package com.webproject.esoteria.controller;
 
 import com.webproject.esoteria.domain.dto.userDTO;
-import com.webproject.esoteria.domain.entity.Username;
 import com.webproject.esoteria.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

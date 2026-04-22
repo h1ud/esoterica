@@ -1,6 +1,13 @@
 package com.webproject.esoteria.service;
 
 import com.webproject.esoteria.domain.dto.productDTO;
+
+import com.webproject.esoteria.domain.mapper.productMapper;
+import com.webproject.esoteria.repository.productRepository;
+
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +77,7 @@ public class productService {
                 .toList();
     }
 
+<<<<<<< HEAD
     private productDTO copyDto(productDTO src) {
         if (src == null) return null;
         productDTO c = new productDTO();
@@ -78,5 +86,29 @@ public class productService {
         c.setActivation(src.getActivation());
         c.setExpiration(src.getExpiration());
         return c;
+=======
+        public List<productDTO> searchByName(String name) {
+            return productRepository.findByProductNameContainingIgnoreCase(name)
+                    .stream()
+                    .map(productMapper::toDto)
+                    .collect(toList());
+        }
+
+        public List<productDTO> findByProceRange(double min, double max) {
+            return productRepository.findByPriceBetween(min, max)
+                    .stream()
+                    .map(productMapper::toDto)
+                    .collect(toList());
+        }
+        // Método para agregar productos de ejemplo al iniciar la aplicación
+    @PostConstruct
+    public void init() {
+        // Solo agrega productos si la base de datos está vacía
+        if (productRepository.count() == 0) {
+            productRepository.save(new Product("Producto A", 100.0));
+            productRepository.save(new Product("Producto B", 150.0));
+            productRepository.save(new Product("Producto C", 200.0));
+        }
+>>>>>>> 49a7db7 (role-implements)
     }
 }
