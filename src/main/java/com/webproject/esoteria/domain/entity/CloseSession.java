@@ -1,6 +1,6 @@
 package com.webproject.esoteria.domain.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +20,7 @@ public class CloseSession {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    private LocalDate emissionDate;
+    private LocalDateTime emissionDate;
     private double total;
 
     @ManyToOne

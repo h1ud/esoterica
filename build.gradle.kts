@@ -27,15 +27,16 @@ dependencies {
 	//implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.mapstruct:mapstruct:1.6.3")
-	implementation("org.projectlombok:lombok:1.18.32")
-	annotationProcessor("org.projectlombok:lombok:1.18.32")
 
 	runtimeOnly("org.postgresql:postgresql")
-	testImplementation("org.projectlombok:lombok:1.18.32")
-	testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	// Añadido: dependencias de pruebas de Spring Security para WithMockUser y csrf()
-	testImplementation("org.springframework.security:spring-security-test")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
+	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

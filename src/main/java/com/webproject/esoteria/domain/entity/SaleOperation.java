@@ -12,7 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter
+@Setter
 @Entity
 public class SaleOperation {
 
@@ -20,7 +25,7 @@ public class SaleOperation {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    private Date issue_date;
+    private LocalDateTime issue_date;
 
     @ManyToOne
     @JoinColumn(name="user_id")
