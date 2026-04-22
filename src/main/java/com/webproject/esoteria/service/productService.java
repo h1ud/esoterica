@@ -4,6 +4,9 @@ import com.webproject.esoteria.domain.entity.Product;
 import com.webproject.esoteria.domain.dto.productDTO;
 import com.webproject.esoteria.domain.mapper.productMapper;
 import com.webproject.esoteria.repository.productRepository;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,4 +67,14 @@ public class productService {
                     .map(productMapper::toDto)
                     .collect(toList());
         }
+        // Método para agregar productos de ejemplo al iniciar la aplicación
+    @PostConstruct
+    public void init() {
+        // Solo agrega productos si la base de datos está vacía
+        if (productRepository.count() == 0) {
+            productRepository.save(new Product("Producto A", 100.0));
+            productRepository.save(new Product("Producto B", 150.0));
+            productRepository.save(new Product("Producto C", 200.0));
+        }
+    }
 }
