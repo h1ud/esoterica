@@ -20,6 +20,8 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
@@ -27,6 +29,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
