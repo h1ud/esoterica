@@ -24,7 +24,7 @@ dependencies {
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
-	implementation("org.springframework.boot:spring-boot-starter-security")
+	//implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.mapstruct:mapstruct:1.6.3")
 	implementation("org.projectlombok:lombok:1.18.32")
@@ -34,6 +34,7 @@ dependencies {
 	testImplementation("org.projectlombok:lombok:1.18.32")
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// Añadido: dependencias de pruebas de Spring Security para WithMockUser y csrf()
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
