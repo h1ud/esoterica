@@ -1,7 +1,6 @@
 package com.webproject.esoteria.domain.entity;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
