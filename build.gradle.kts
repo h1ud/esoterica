@@ -21,14 +21,18 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.flywaydb:flyway-core:10.15.0")
 	implementation("org.springframework.boot:spring-boot-starter-web") // reemplaza webmvc
-	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+	
 	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
+	
 	//implementation("org.springframework.boot:spring-boot-starter-security")//
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.mapstruct:mapstruct:1.6.3")
+	implementation("org.springframework.boot:spring-boot-starter")
 
 	runtimeOnly("org.postgresql:postgresql")
+
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+	annotationProcessor("org.projectlombok:lombok")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
