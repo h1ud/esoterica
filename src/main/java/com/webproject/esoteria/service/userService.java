@@ -3,7 +3,7 @@ package com.webproject.esoteria.service;
 import com.webproject.esoteria.domain.dto.userDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ public class userService {
 
     public userDTO create(userDTO dto) {
         long id = idGenerator.getAndIncrement();
-        dto.setCreate_date(new Date());
+        dto.setCreate_date(LocalDateTime.now());
         store.put(id, cloneDto(dto));
         return cloneDto(dto);
     }
@@ -58,6 +58,7 @@ public class userService {
             existing.setPassword_hash(dto.getPassword_hash() != null ? dto.getPassword_hash() : existing.getPassword_hash());
             existing.setFirst_name(dto.getFirst_name() != null ? dto.getFirst_name() : existing.getFirst_name());
             existing.setLast_name(dto.getLast_name() != null ? dto.getLast_name() : existing.getLast_name());
+            existing.setRole(dto.getRole() != null ? dto.getRole() : existing.getRole());
             // no tocar create_date salvo que se necesite
             return existing;
         }) != null ? cloneDto(store.get(id)) : null;
@@ -75,7 +76,8 @@ public class userService {
         copy.setPassword_hash(src.getPassword_hash());
         copy.setFirst_name(src.getFirst_name());
         copy.setLast_name(src.getLast_name());
-        copy.setCreate_date(src.getCreate_date() != null ? (Date) src.getCreate_date().clone() : null);
+        copy.setRole(src.getRole());
+        copy.setCreate_date(src.getCreate_date());
         return copy;
     }
 }
