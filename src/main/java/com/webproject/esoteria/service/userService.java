@@ -4,6 +4,10 @@ import com.webproject.esoteria.domain.dto.userDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+<<<<<<< HEAD
+=======
+import java.util.Date;
+>>>>>>> 20ff1f5 (complete-commit)
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,8 +80,12 @@ public class userService {
         copy.setPassword_hash(src.getPassword_hash());
         copy.setFirst_name(src.getFirst_name());
         copy.setLast_name(src.getLast_name());
+<<<<<<< HEAD
         copy.setRole(src.getRole());
         copy.setCreate_date(src.getCreate_date());
+=======
+        copy.setCreate_date(src.getCreate_date() != null ? (LocalDateTime) src.getCreate_date().clone() : null);
+>>>>>>> 20ff1f5 (complete-commit)
         return copy;
     }
 }

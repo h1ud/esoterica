@@ -3,6 +3,7 @@ package com.webproject.esoteria.domain.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import com.webproject.esoteria.domain.entity.Role;
 import com.webproject.esoteria.domain.entity.Username;
