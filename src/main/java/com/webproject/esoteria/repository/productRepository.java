@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface productRepository extends JpaRepository<Product,Long> {
 
-    @Query("SELECT p FROM Product p WHERE LOWER(p.product_name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Product> findByProductNameContainingIgnoreCase(@Param("name") String product_name);
 
     List<Product> findByPriceBetween(double min, double max);

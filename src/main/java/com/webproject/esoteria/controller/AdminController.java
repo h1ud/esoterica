@@ -1,10 +1,7 @@
 package com.webproject.esoteria.controller;
 
-import com.webproject.esoteria.domain.dto.AdminLoginRequest;
-import com.webproject.esoteria.domain.dto.AdminLoginResponse;
 import com.webproject.esoteria.domain.dto.userDTO;
-import com.webproject.esoteria.service.AdminAuthService;
-import com.webproject.esoteria.service.AdminJwtService;
+import com.webproject.esoteria.service.JwtService;
 import com.webproject.esoteria.service.userService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,35 +20,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
-public class AdminUserController {
-    private final AdminAuthService adminAuthService;
-    private final AdminJwtService adminJwtService;
+public class AdminController {
+    private final JwtService jwtService;
     private final userService userService;
 
-    public AdminUserController(
-            AdminAuthService adminAuthService,
-            AdminJwtService adminJwtService,
-            userService userService
-    ) {
-        this.adminAuthService = adminAuthService;
-        this.adminJwtService = adminJwtService;
+    public AdminController(JwtService jwtService, userService userService) {
+        this.jwtService = jwtService;
         this.userService = userService;
-    }
-
-    @PostMapping("/auth/login")
-    public ResponseEntity<AdminLoginResponse> login(@RequestBody AdminLoginRequest request) {
-        return adminAuthService.login(request)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<userDTO>> listUsers(
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        // Estos endpoints usan una validacion JWT manual para no alterar la seguridad global del proyecto.
-        if (isUnauthorized(authorization)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        // La gestion de usuarios queda centralizada aqui y protegida por JWT con rol ADMIN.
+        HttpStatus accessError = resolveAdminAccessError(authorization);
+        if (accessError != null) {
+            return ResponseEntity.status(accessError).build();
         }
 
         return ResponseEntity.ok(userService.listAll());
@@ -62,8 +47,9 @@ public class AdminUserController {
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        if (isUnauthorized(authorization)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        HttpStatus accessError = resolveAdminAccessError(authorization);
+        if (accessError != null) {
+            return ResponseEntity.status(accessError).build();
         }
 
         userDTO user = userService.getById(id);
@@ -75,8 +61,9 @@ public class AdminUserController {
             @Valid @RequestBody userDTO request,
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        if (isUnauthorized(authorization)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        HttpStatus accessError = resolveAdminAccessError(authorization);
+        if (accessError != null) {
+            return ResponseEntity.status(accessError).build();
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
@@ -88,8 +75,9 @@ public class AdminUserController {
             @Valid @RequestBody userDTO request,
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        if (isUnauthorized(authorization)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        HttpStatus accessError = resolveAdminAccessError(authorization);
+        if (accessError != null) {
+            return ResponseEntity.status(accessError).build();
         }
 
         userDTO updatedUser = userService.update(id, request);
@@ -101,15 +89,21 @@ public class AdminUserController {
             @PathVariable Long id,
             @RequestHeader(value = "Authorization", required = false) String authorization
     ) {
-        if (isUnauthorized(authorization)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        HttpStatus accessError = resolveAdminAccessError(authorization);
+        if (accessError != null) {
+            return ResponseEntity.status(accessError).build();
         }
 
         userDTO deletedUser = userService.delete(id);
         return deletedUser != null ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    private boolean isUnauthorized(String authorization) {
-        return !adminJwtService.isValidAuthorizationHeader(authorization);
+    private HttpStatus resolveAdminAccessError(String authorization) {
+        // 401 = no se autentico con JWT valido. 403 = si tiene JWT, pero no tiene rol ADMIN.
+        if (!jwtService.isValidAuthorizationHeader(authorization)) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+
+        return jwtService.isValidAdminAuthorizationHeader(authorization) ? null : HttpStatus.FORBIDDEN;
     }
 }

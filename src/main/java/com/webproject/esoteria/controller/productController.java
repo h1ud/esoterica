@@ -3,7 +3,6 @@ package com.webproject.esoteria.controller;
 import com.webproject.esoteria.domain.dto.productDTO;
 import com.webproject.esoteria.service.productService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +10,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 public class productController {
-    @Autowired
-    private productService productService;
+    private final productService productService;
+
+    public productController(productService productService) {
+        this.productService = productService;
+    }
 
      @PostMapping
     public ResponseEntity<productDTO> makeProduct(@Valid @RequestBody productDTO productDTO) {

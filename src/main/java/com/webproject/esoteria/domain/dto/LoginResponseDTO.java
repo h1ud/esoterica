@@ -1,15 +1,19 @@
 package com.webproject.esoteria.domain.dto;
 
-// Respuesta del login admin con el token que protege los endpoints /api/admin.
-public class AdminLoginResponse {
+// DTO de salida: JWT y datos basicos para que el cliente sepa que rol inicio sesion.
+public class LoginResponseDTO {
     private String token;
     private String tokenType;
     private long expiresInSeconds;
+    private String username;
+    private String role;
 
-    public AdminLoginResponse(String token, String tokenType, long expiresInSeconds) {
+    public LoginResponseDTO(String token, String tokenType, long expiresInSeconds, String username, String role) {
         this.token = token;
         this.tokenType = tokenType;
         this.expiresInSeconds = expiresInSeconds;
+        this.username = username;
+        this.role = role;
     }
 
     public String getToken() {
@@ -34,5 +38,21 @@ public class AdminLoginResponse {
 
     public void setExpiresInSeconds(long expiresInSeconds) {
         this.expiresInSeconds = expiresInSeconds;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

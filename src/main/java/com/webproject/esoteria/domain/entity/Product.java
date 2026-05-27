@@ -23,6 +23,9 @@ public class Product {
     private LocalDateTime activation;
     private LocalDateTime expiration;
 
+    public Product() {
+    }
+
     public Product(String productName, double price) {
         this.productName = productName;
         this.price = price;

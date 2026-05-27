@@ -1,7 +1,7 @@
 package com.webproject.esoteria.domain.dto;
 
-// Datos que envia el cliente para iniciar sesion como admin.
-public class AdminLoginRequest {
+// DTO de entrada: credenciales que llegan desde frontend o Postman para iniciar sesion.
+public class LoginRequestDTO {
     private String username;
     private String password;
 

@@ -1,90 +1,63 @@
 package com.webproject.esoteria.service;
 
 import com.webproject.esoteria.domain.dto.productDTO;
-
+import com.webproject.esoteria.domain.entity.Product;
 import com.webproject.esoteria.domain.mapper.productMapper;
 import com.webproject.esoteria.repository.productRepository;
-
-import jakarta.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class productService {
+    private final productRepository productRepository;
+    private final productMapper productMapper;
 
-    private final Map<Long, productDTO> store = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
-
-    @PostConstruct
-    private void init() {
-        productDTO p1 = new productDTO();
-        p1.setProduct_name("Galletas");
-        p1.setPrice(2.5);
-        p1.setActivation("2026-01-01");
-        p1.setExpiration("2027-01-01");
-        make(p1);
-
-        productDTO p2 = new productDTO();
-        p2.setProduct_name("Jugo");
-        p2.setPrice(1.75);
-        p2.setActivation("2026-02-01");
-        p2.setExpiration("2027-02-01");
-        make(p2);
+    public productService(productRepository productRepository, productMapper productMapper) {
+        this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     public productDTO make(productDTO dto) {
-        long id = idGenerator.getAndIncrement();
-        // guardar copia para evitar aliasing
-        productDTO copy = copyDto(dto);
-        store.put(id, copy);
-        return copyDto(copy);
+        Product product = productMapper.toEntity(dto);
+        product.setActivation(product.getActivation() != null ? product.getActivation() : LocalDateTime.now());
+        product.setExpiration(product.getExpiration() != null ? product.getExpiration() : LocalDateTime.now().plusYears(1));
+
+        return productMapper.toDto(productRepository.save(product));
     }
 
     public List<productDTO> listAll() {
-        return store.values().stream().map(this::copyDto).toList();
+        return productRepository.findAll().stream().map(productMapper::toDto).toList();
     }
 
     public productDTO search(Long id) {
-        return copyDto(store.get(id));
+        return productRepository.findById(id).map(productMapper::toDto).orElse(null);
     }
 
     public productDTO delete(Long id) {
-        return copyDto(store.remove(id));
+        return productRepository.findById(id)
+                .map(product -> {
+                    productDTO deleted = productMapper.toDto(product);
+                    productRepository.delete(product);
+                    return deleted;
+                })
+                .orElse(null);
     }
 
     public productDTO update(Long id, productDTO dto) {
-        return store.computeIfPresent(id, (k, existing) -> {
-            existing.setProduct_name(dto.getProduct_name() != null ? dto.getProduct_name() : existing.getProduct_name());
-            existing.setPrice(dto.getPrice() != 0.0 ? dto.getPrice() : existing.getPrice());
-            existing.setActivation(dto.getActivation() != null ? dto.getActivation() : existing.getActivation());
-            existing.setExpiration(dto.getExpiration() != null ? dto.getExpiration() : existing.getExpiration());
-            return existing;
-        }) != null ? copyDto(store.get(id)) : null;
+        return productRepository.findById(id)
+                .map(existing -> {
+                    productMapper.updateProductFromDto(dto, existing);
+                    return productMapper.toDto(productRepository.save(existing));
+                })
+                .orElse(null);
     }
 
     public List<productDTO> searchByName(String name) {
-        String lower = name == null ? "" : name.toLowerCase();
-        return store.values().stream()
-                .filter(p -> p.getProduct_name() != null && p.getProduct_name().toLowerCase().contains(lower))
-                .map(this::copyDto)
+        return productRepository.findByProductNameContainingIgnoreCase(name == null ? "" : name)
+                .stream()
+                .map(productMapper::toDto)
                 .toList();
-    }
-
-    private productDTO copyDto(productDTO src) {
-        if (src == null) return null;
-        productDTO c = new productDTO();
-        c.setProduct_name(src.getProduct_name());
-        c.setPrice(src.getPrice());
-        c.setActivation(src.getActivation());
-        c.setExpiration(src.getExpiration());
-        return c;
-
     }
 }

@@ -40,6 +40,8 @@ public class Username {
     @OneToMany(mappedBy = "username")
     private List<SaleOperation> saleOperations;
 
+    public Username() {
+    }
 
     public Username(String username, String passwordHash, String firstName, String lastName, Role role) {
         this.username = username;

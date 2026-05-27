@@ -19,7 +19,8 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.flywaydb:flyway-core:10.15.0")
+	implementation("org.flywaydb:flyway-core:11.20.3")
+	implementation("org.flywaydb:flyway-database-postgresql:11.20.3")
 	implementation("org.springframework.boot:spring-boot-starter-web") // reemplaza webmvc
 	
 	compileOnly("org.projectlombok:lombok")
@@ -33,14 +34,12 @@ dependencies {
 
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
 	annotationProcessor("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
-	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
-	//testImplementation("org.springframework.boot:spring-boot-starter-security-test")//
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
 	testCompileOnly("org.projectlombok:lombok")
 	testAnnotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

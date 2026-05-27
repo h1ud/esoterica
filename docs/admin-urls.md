@@ -2,24 +2,11 @@
 
 Base: `http://localhost:8080`
 
-## Credenciales de arranque
+## Login unico
 
-Si todavia no existe ningun usuario con rol `ADMIN` o `ROLE_ADMIN`, se puede iniciar con:
+El proyecto usa un solo login para usuarios y administradores:
 
-- Usuario: `admin`
-- Password: `admin123`
-
-Variables opcionales:
-
-- `ESOTERICA_ADMIN_USERNAME`
-- `ESOTERICA_ADMIN_PASSWORD`
-- `ESOTERICA_ADMIN_JWT_SECRET`
-
-Cuando ya exista un usuario con rol `ADMIN` o `ROLE_ADMIN`, el login valida contra ese usuario y su `password_hash`.
-
-## Login
-
-**POST** `http://localhost:8080/api/admin/auth/login`
+**POST** `http://localhost:8080/api/auth/login`
 
 ```json
 {
@@ -28,7 +15,7 @@ Cuando ya exista un usuario con rol `ADMIN` o `ROLE_ADMIN`, el login valida cont
 }
 ```
 
-La respuesta devuelve un JWT. Usar el token en los endpoints protegidos:
+Usar el JWT devuelto:
 
 ```http
 Authorization: Bearer <token>
@@ -42,10 +29,10 @@ Authorization: Bearer <token>
 - **PUT** `http://localhost:8080/api/admin/users/1`
 - **DELETE** `http://localhost:8080/api/admin/users/1`
 
-## Roles
+## Promociones
 
-- **GET** `http://localhost:8080/api/admin/roles`
-- **GET** `http://localhost:8080/api/admin/roles/1`
-- **POST** `http://localhost:8080/api/admin/roles`
-- **PUT** `http://localhost:8080/api/admin/roles/1`
-- **DELETE** `http://localhost:8080/api/admin/roles/1`
+- **GET** `http://localhost:8080/api/admin/promotions`
+- **GET** `http://localhost:8080/api/admin/promotions/1`
+- **POST** `http://localhost:8080/api/admin/promotions`
+- **PUT** `http://localhost:8080/api/admin/promotions/1`
+- **DELETE** `http://localhost:8080/api/admin/promotions/1`

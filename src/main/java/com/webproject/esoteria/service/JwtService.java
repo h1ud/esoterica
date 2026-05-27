@@ -17,18 +17,18 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class AdminJwtService {
+public class JwtService {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final String TOKEN_TYPE = "Bearer";
-    private static final String ISSUER = "esoterica-admin";
+    private static final String ISSUER = "esoterica-api";
     private static final Duration EXPIRATION = Duration.ofHours(2);
 
     private final ObjectMapper objectMapper;
     private final byte[] secret;
 
-    public AdminJwtService(ObjectMapper objectMapper) {
+    public JwtService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.secret = readEnv("ESOTERICA_ADMIN_JWT_SECRET", "esoterica-admin-local-secret-change-me")
+        this.secret = readEnv("ESOTERICA_JWT_SECRET", readEnv("ESOTERICA_ADMIN_JWT_SECRET", "esoterica-local-secret-change-me"))
                 .getBytes(StandardCharsets.UTF_8);
     }
 
@@ -38,7 +38,7 @@ public class AdminJwtService {
         header.put("alg", "HS256");
         header.put("typ", "JWT");
 
-        // Claims minimos para identificar al admin y limitar la vida del token.
+        // Claims minimos del JWT: usuario autenticado, rol para autorizacion, emisor y expiracion.
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("sub", username);
         payload.put("role", roleName);
@@ -55,6 +55,18 @@ public class AdminJwtService {
 
     public boolean isValidAuthorizationHeader(String authorizationHeader) {
         return resolveSubject(authorizationHeader).isPresent();
+    }
+
+    public boolean isValidAdminAuthorizationHeader(String authorizationHeader) {
+        String token = extractBearerToken(authorizationHeader);
+        if (token == null) {
+            return false;
+        }
+
+        // Las rutas admin no solo requieren un token valido: tambien exigen rol ADMIN dentro del JWT.
+        return readVerifiedPayload(token)
+                .map(payload -> isAdminRoleName(payload.path("role").asText()))
+                .orElse(false);
     }
 
     public Optional<String> resolveSubject(String authorizationHeader) {
@@ -108,12 +120,11 @@ public class AdminJwtService {
             String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
             JsonNode payload = objectMapper.readTree(payloadJson);
 
-            // El token solo es aceptado si fue emitido por este modulo, tiene rol admin y no expiro.
+            // Autenticacion tecnica del token: firma correcta, emisor esperado y fecha vigente.
             boolean validIssuer = ISSUER.equals(payload.path("iss").asText());
-            boolean validRole = isAdminRoleName(payload.path("role").asText());
             boolean notExpired = payload.path("exp").asLong(0) > Instant.now().getEpochSecond();
 
-            return validIssuer && validRole && notExpired ? Optional.of(payload) : Optional.empty();
+            return validIssuer && notExpired ? Optional.of(payload) : Optional.empty();
         } catch (Exception ex) {
             return Optional.empty();
         }
@@ -132,7 +143,7 @@ public class AdminJwtService {
         try {
             return encode(objectMapper.writeValueAsBytes(content));
         } catch (Exception ex) {
-            throw new IllegalStateException("No se pudo crear el token de admin", ex);
+            throw new IllegalStateException("No se pudo crear el token", ex);
         }
     }
 
@@ -146,7 +157,7 @@ public class AdminJwtService {
             mac.init(new SecretKeySpec(secret, HMAC_ALGORITHM));
             return mac.doFinal(value.getBytes(StandardCharsets.UTF_8));
         } catch (GeneralSecurityException ex) {
-            throw new IllegalStateException("No se pudo firmar el token de admin", ex);
+            throw new IllegalStateException("No se pudo firmar el token", ex);
         }
     }
 
