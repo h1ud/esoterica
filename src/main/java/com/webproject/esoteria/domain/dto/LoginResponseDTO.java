@@ -1,0 +1,58 @@
+package com.webproject.esoteria.domain.dto;
+
+// DTO de salida: JWT y datos basicos para que el cliente sepa que rol inicio sesion.
+public class LoginResponseDTO {
+    private String token;
+    private String tokenType;
+    private long expiresInSeconds;
+    private String username;
+    private String role;
+
+    public LoginResponseDTO(String token, String tokenType, long expiresInSeconds, String username, String role) {
+        this.token = token;
+        this.tokenType = tokenType;
+        this.expiresInSeconds = expiresInSeconds;
+        this.username = username;
+        this.role = role;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public long getExpiresInSeconds() {
+        return expiresInSeconds;
+    }
+
+    public void setExpiresInSeconds(long expiresInSeconds) {
+        this.expiresInSeconds = expiresInSeconds;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+}
