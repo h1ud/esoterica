@@ -1,54 +1,55 @@
 package com.webproject.esoteria.domain.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
+@Table(name = "user")
 public class Username {
 
-
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String username;
-    private String password_hash;
-    private String first_name;
-    private String last_name;
-
-    private LocalDateTime create_date;
-
     @ManyToOne
-    @JoinColumn(name="role_id",nullable = false)
+    @JoinColumn(name = "id_role", nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "username")
-    private List<CloseSession> closeSessions;
+    @Column(nullable = false, unique = true, length = 100)
+    private String username;
 
-    @OneToMany(mappedBy = "username")
-    private List<SaleOperation> saleOperations;
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "last_name", nullable = false, length = 100)
+    private String lastName;
+
+    @Column(name = "create_date", nullable = false)
+    private LocalDateTime createDate;
 
     public Username() {
     }
 
-    public Username(String username, String passwordHash, String firstName, String lastName, Role role) {
-        this.username = username;
-        this.password_hash = passwordHash;
-        this.first_name = firstName;
-        this.last_name = lastName;
+    public Username(Role role, String username, String passwordHash, String name, String lastName) {
         this.role = role;
-        this.create_date = LocalDateTime.now();
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.name = name;
+        this.lastName = lastName;
+        this.createDate = LocalDateTime.now();
     }
 }

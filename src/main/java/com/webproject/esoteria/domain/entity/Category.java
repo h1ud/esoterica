@@ -9,23 +9,26 @@ import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "role")
-public class Role {
-
+@Table(name = "category")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "role_name", nullable = false, unique = true, length = 100)
-    private String roleName;
+    @Column(name = "category_name", nullable = false, unique = true, length = 100)
+    private String categoryName;
 
-    public Role() {
+    @Column(length = 255)
+    private String description;
+
+    public Category() {
     }
 
-    public Role(String roleName) {
-        this.roleName = roleName;
+    public Category(String categoryName, String description) {
+        this.categoryName = categoryName;
+        this.description = description;
     }
 }

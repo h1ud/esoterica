@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "role" (
-                                      "id" BIGINT,
-                                      "role_name" VARCHAR(100) NOT NULL UNIQUE,
+    "id" BIGINT,
+   "role_name" VARCHAR(100) NOT NULL UNIQUE,
     PRIMARY KEY("id")
     );
 
