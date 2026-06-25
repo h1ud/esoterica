@@ -26,7 +26,7 @@ public class CashClosing {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private Username user;
+    private User user;
 
     @Column(name = "emission_date", nullable = false)
     private LocalDateTime emissionDate;
@@ -50,7 +50,7 @@ public class CashClosing {
     public CashClosing() {
     }
 
-    public CashClosing(Username user, BigDecimal totalEfectivo, BigDecimal totalYapePlin) {
+    public CashClosing(User user, BigDecimal totalEfectivo, BigDecimal totalYapePlin) {
         this.user = user;
         this.totalEfectivo = totalEfectivo;
         this.totalYapePlin = totalYapePlin;

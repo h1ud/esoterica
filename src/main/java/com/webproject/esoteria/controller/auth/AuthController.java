@@ -1,0 +1,82 @@
+package com.webproject.esoteria.controller.auth;
+
+import com.webproject.esoteria.domain.dto.LoginRequestDTO;
+import com.webproject.esoteria.domain.dto.auth.AuthRequest;
+import com.webproject.esoteria.domain.dto.auth.AuthResponseDTO;
+import com.webproject.esoteria.domain.entity.User;
+import com.webproject.esoteria.repository.UserRepository;
+import com.webproject.esoteria.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // <-- Asegúrate de tener esta importación correcta
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/auth") // <-- Agrupamos bajo una ruta limpia y semántica
+@CrossOrigin(origins = "http://localhost:4200")
+public class AuthController {
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    // 1. ENDPOINT REQUERIDO POR EL DOCENTE (Hardcoded para pruebas rápidas)
+    @PostMapping("/test-auth")
+    public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) {
+        if ("admin".equals(authRequest.getUsername()) && "password".equals(authRequest.getPassword())) {
+            String token = jwtUtil.generateToken(authRequest.getUsername());
+            return ResponseEntity.ok(token);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    // 2. LOGIN REAL DE LA INTRANET (Unificado, Seguro con BCrypt y JWT Real)
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDto) {
+        try {
+            System.out.println("=== INTENTO DE LOGIN ===");
+            System.out.println("Username recibido: " + loginDto.username());
+
+            // 1. Buscar si el usuario existe
+            User user = userRepository.findByUsername(loginDto.username())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado en BD"));
+
+            System.out.println("Usuario encontrado en BD: " + user.getUsername());
+
+            // 2. Validar contraseña
+            boolean matches = passwordEncoder.matches(loginDto.password(), user.getPasswordHash());
+            System.out.println("¿Contraseña coincide?: " + matches);
+
+            if (!matches) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+            }
+
+            // 3. Generar el Token JWT REAL
+            System.out.println("Intentando generar token con jwtUtil...");
+            String token = jwtUtil.generateToken(user.getUsername());
+            System.out.println("Token generado con éxito: " + token);
+
+            // 4. Obtener Rol
+            String roleName = user.getRole().getRoleName();
+            System.out.println("Rol del usuario: " + roleName);
+
+            AuthResponseDTO response = new AuthResponseDTO(token, user.getUsername(), roleName);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // ¡Esto va a pintar el error real en la consola de tu IDE!
+            System.out.println("=== CRASH EN EL LOGIN ===");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+        }
+    }
+}

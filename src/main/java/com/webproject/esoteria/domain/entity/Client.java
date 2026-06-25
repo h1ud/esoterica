@@ -34,7 +34,7 @@ public class Client {
 	@Column(name = "birthday_date")
 	private LocalDate birthdayDate;
 
-	@Column(name = "create_date", nullable = false)
+	@Column(name = "create_date", nullable = false, insertable = false, updatable = false)
 	private LocalDateTime createDate;
 
 	@OneToMany(mappedBy = "client")

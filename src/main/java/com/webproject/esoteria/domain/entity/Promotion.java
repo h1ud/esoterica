@@ -25,7 +25,7 @@ public class Promotion {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private Username user;
+    private User user;
 
     @Column(nullable = false, length = 150)
     private String title;
@@ -60,7 +60,7 @@ public class Promotion {
     public Promotion() {
     }
 
-    public Promotion(Username user, String title, BigDecimal discount, String discountType) {
+    public Promotion(User user, String title, BigDecimal discount, String discountType) {
         this.user = user;
         this.title = title;
         this.discount = discount;

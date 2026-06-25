@@ -26,7 +26,7 @@ public class SaleOperation {
 
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
-    private Username user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "id_promo_code")
@@ -56,7 +56,7 @@ public class SaleOperation {
     public SaleOperation() {
     }
 
-    public SaleOperation(Username user, String paymentMethod) {
+    public SaleOperation(User user, String paymentMethod) {
         this.user = user;
         this.paymentMethod = paymentMethod;
         this.paymentStatus = "pendiente";
