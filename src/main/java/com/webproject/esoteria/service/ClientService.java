@@ -1,5 +1,7 @@
 package com.webproject.esoteria.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.webproject.esoteria.domain.dto.ClientDTO;
 import com.webproject.esoteria.domain.dto.ClientSaveDTO;
 import com.webproject.esoteria.domain.entity.Client;
@@ -9,8 +11,12 @@ import java.util.List;
 
 @Service
 public class ClientService {
-
+    @Autowired
     private final ClientRepository clientRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
 
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
@@ -38,7 +44,7 @@ public class ClientService {
         client.setBirthdayDate(dto.birthdayDate());
 
         // Simulación: Aquí encriptarías la contraseña del formulario antes de ir a la BD
-        client.setPasswordHash("ENCRYPTED_" + dto.password());
+        client.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         clientRepository.save(client);
     }
@@ -54,7 +60,9 @@ public class ClientService {
             client.setBirthdayDate(dto.birthdayDate());
         }
 
-        clientRepository.save(client); // JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
+        if (dto.password() != null && !dto.password().isEmpty()) {
+            client.setPasswordHash(passwordEncoder.encode(dto.password()));
+        } // JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
     }
     // 5. Lógica para Eliminar Cliente (DELETE)
     public void deleteClient(Long id) {

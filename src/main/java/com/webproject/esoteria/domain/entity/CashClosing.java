@@ -28,7 +28,7 @@ public class CashClosing {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @Column(name = "emission_date", nullable = false)
+    @Column(name = "emission_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime emissionDate;
 
     @Column(name = "total_efectivo", nullable = false, precision = 12, scale = 2)

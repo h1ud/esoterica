@@ -54,7 +54,7 @@ public class Promotion {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createDate;
 
     public Promotion() {
