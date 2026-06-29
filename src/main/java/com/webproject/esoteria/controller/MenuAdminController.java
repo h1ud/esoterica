@@ -3,6 +3,7 @@ package com.webproject.esoteria.controller;
 import com.webproject.esoteria.domain.dto.ProductDTO;
 import com.webproject.esoteria.domain.dto.ProductSaveDTO;
 import com.webproject.esoteria.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,33 +15,33 @@ import java.util.List;
 public class MenuAdminController {
     private final ProductService productService;
 
+    // Inyectamos directamente tu clase ProductService
     public MenuAdminController(ProductService productService) {
         this.productService = productService;
     }
 
-    // 5. LEER TODO O FILTRAR (GET) -> Alimenta la tabla y al Formulario Buscador
-    @GetMapping("/products")
-    public ResponseEntity<List<ProductDTO>> getAllProducts(@RequestParam(required = false) String search) {
-        return ResponseEntity.ok(productService.getAllProducts(search));
+    // GET: /api/products -> Trae todos los productos de golpe
+    @GetMapping
+    public ResponseEntity<List<ProductDTO>> getAll() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    // 6. CREAR PRODUCTO (POST) -> Conectado al Formulario "Agregar a la Carta"
-    @PostMapping("/products")
-    public ResponseEntity<Void> createProduct(@RequestBody ProductSaveDTO dto) {
-        productService.saveProduct(dto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    // POST: /api/products -> Crea un nuevo producto mapeado a su categoría
+    @PostMapping
+    public ResponseEntity<ProductDTO> create(@Valid @RequestBody ProductSaveDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(dto));
     }
 
-    // 7. ACTUALIZAR PRODUCTO (PUT) -> Conectado al Formulario "Editar Precios/Detalles"
-    @PutMapping("/products/{id}")
+    // PUT: /api/products/{id} -> Actualiza un producto existente
+    @PutMapping("/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody ProductSaveDTO dto) {
         productService.updateProduct(id, dto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // Devuelve estado 204 sin cuerpo
     }
 
-    // 8. ELIMINAR PRODUCTO (DELETE) -> Botón de acción directa en la tabla
-    @DeleteMapping("/products/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    // DELETE: /api/products/{id} -> Borra un producto del menú
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

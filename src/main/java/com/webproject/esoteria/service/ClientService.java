@@ -25,7 +25,13 @@ public class ClientService {
     // 1. Lógica para Leer todos los clientes (GET)
     public List<ClientDTO> getAllClients() {
         return clientRepository.findAll().stream()
-                .map(c -> new ClientDTO(c.getId(), c.getName(), c.getDni(), c.getBirthdayDate(), c.getCreateDate()))
+                .map(c -> new ClientDTO(
+                        c.getId(),
+                        c.getName(),
+                        c.getDni(),
+                        c.getBirthdayDate(),
+                        c.getCreateDate()
+                ))
                 .toList();
     }
 
@@ -33,7 +39,13 @@ public class ClientService {
     public ClientDTO getClientByDni(String dni) {
         Client c = clientRepository.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dni));
-        return new ClientDTO(c.getId(), c.getName(), c.getDni(), c.getBirthdayDate(), c.getCreateDate());
+        return new ClientDTO(
+                c.getId(),
+                c.getName(),
+                c.getDni(),
+                c.getBirthdayDate(),
+                c.getCreateDate()
+        );
     }
 
     // 3. Lógica para Registrar Cliente (POST)
@@ -62,7 +74,9 @@ public class ClientService {
 
         if (dto.password() != null && !dto.password().isEmpty()) {
             client.setPasswordHash(passwordEncoder.encode(dto.password()));
-        } // JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
+        }
+
+        clientRepository.save(client);// JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
     }
     // 5. Lógica para Eliminar Cliente (DELETE)
     public void deleteClient(Long id) {

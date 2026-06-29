@@ -1,76 +1,104 @@
 package com.webproject.esoteria.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.webproject.esoteria.domain.dto.UserDTO;
 import com.webproject.esoteria.domain.dto.UserSaveDTO;
 import com.webproject.esoteria.domain.entity.User;
 import com.webproject.esoteria.domain.entity.Role;
 import com.webproject.esoteria.repository.UserRepository;
 import com.webproject.esoteria.repository.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class UserService {
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
+    // Inyección limpia por Constructor (Como en ClientService)
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
-    @Autowired
-    private RoleRepository roleRepository;
+    // 1. Lógica para Leer todos los usuarios (GET)
+    @Transactional(readOnly = true)
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(u -> new UserDTO(
+                        u.getId(),
+                        u.getUsername(),
+                        u.getName(),
+                        u.getLastName(),
+                        u.getRole().getId(),
+                        u.getRole().getRoleName(),
+                        u.getCreateDate()
+                ))
+                .toList();
+    }
 
-    // Registrar un nuevo usuario de staff
-    public User saveUser(UserSaveDTO dto) {
-        if (userRepository.findByUsername(dto.username()).isPresent()) {
-            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
-        }
+    // 2. Lógica para Buscar usuario por ID (GET)
+    @Transactional(readOnly = true)
+    public UserDTO getUserById(Long id) {
+        User u = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+        return new UserDTO(
+                u.getId(),
+                u.getUsername(),
+                u.getName(),
+                u.getLastName(),
+                u.getRole().getId(),
+                u.getRole().getRoleName(),
+                u.getCreateDate()
+        );
+    }
 
+    // 3. Lógica para Registrar Usuario (POST)
+    public void saveUser(UserSaveDTO dto) {
         Role role = roleRepository.findById(dto.idRole())
-                .orElseThrow(() -> new IllegalArgumentException("El Rol especificado no existe."));
-
+                .orElseThrow(() -> new RuntimeException("El Rol especificado no existe con ID: " + dto.idRole()));
         User user = new User();
+        user.setUsername(dto.username());
+        user.setName(dto.name());
+        user.setLastName(dto.lastName());
         user.setRole(role);
-        user.setUsername(dto.username());
 
+        // Encriptar la contraseña del formulario antes de ir a la BD
         user.setPasswordHash(passwordEncoder.encode(dto.password()));
-        // TODO: Aquí aplicarás tu BCryptPasswordEncoder cuando unas la seguridad completa
-        user.setName(dto.name());
-        user.setLastName(dto.lastName());
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    // Actualizar usuario existente
-    public User updateUser(Long id, UserSaveDTO dto) {
+    // 4. Lógica para Actualizar Usuario (PUT)
+    public void updateUser(Long id, UserSaveDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
         user.setUsername(dto.username());
         user.setName(dto.name());
         user.setLastName(dto.lastName());
 
-        // Solo cambiar contraseña si viene una nueva
         if (dto.password() != null && !dto.password().isEmpty()) {
             user.setPasswordHash(passwordEncoder.encode(dto.password()));
         }
 
         Role role = roleRepository.findById(dto.idRole())
-                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + dto.idRole()));
         user.setRole(role);
 
-        return userRepository.save(user);
+        userRepository.save(user); // JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
     }
 
-    // Eliminar usuario
+    // 5. Lógica para Eliminar Usuario (DELETE)
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new IllegalArgumentException("Usuario no existe");
+            throw new RuntimeException("Usuario no encontrado con ID: " + id);
         }
         userRepository.deleteById(id);
     }

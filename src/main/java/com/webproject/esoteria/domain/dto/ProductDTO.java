@@ -11,5 +11,4 @@ public record ProductDTO(
         Long categoryId,
         String categoryName
 ) {
-
 }

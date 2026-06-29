@@ -1,84 +1,111 @@
 package com.webproject.esoteria.service;
 
-
 import com.webproject.esoteria.domain.dto.ProductDTO;
 import com.webproject.esoteria.domain.dto.ProductSaveDTO;
 import com.webproject.esoteria.domain.entity.Category;
 import com.webproject.esoteria.domain.entity.Product;
-import com.webproject.esoteria.repository.CategoryRepository;
 import com.webproject.esoteria.repository.ProductRepository;
+import com.webproject.esoteria.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class ProductService {
+
+    @Autowired
     private final ProductRepository productRepository;
+
+    @Autowired
     private final CategoryRepository categoryRepository;
 
+    // Constructor para la inyección de dependencias igual a tu ClientService
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    // 5. Lógica para Leer o Filtrar Productos (GET) -> Para el Formulario de Buscador
-    public List<ProductDTO> getAllProducts(String search) {
-        List<Product> products;
-
-        // Si Angular envía un término de búsqueda, filtramos; si no, traemos todo
-        if (search != null && !search.trim().isEmpty()) {
-            products = productRepository.findByProductNameContainingIgnoreCase(search);
-        } else {
-            products = productRepository.findAll();
-        }
-
-        return products.stream()
+    // 1. Lógica para Leer todos los productos (GET) - Con @Transactional(readOnly = true) por rendimiento
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll().stream()
                 .map(p -> new ProductDTO(
                         p.getId(),
                         p.getProductName(),
                         p.getDescription(),
                         p.getPrice(),
                         p.isAvailable(),
-                        p.getCategory() != null ? p.getCategory().getId() : null,
-                        p.getCategory() != null ? p.getCategory().getCategoryName() : "sin Categoría"
-                )).toList();
+                        p.getCategory().getId(),
+                        p.getCategory().getCategoryName()
+                ))
+                .toList();
     }
 
-    // 6. Lógica para Crear Producto (POST)
-    public void saveProduct(ProductSaveDTO dto) {
-        Product product = new Product();
-        product.setProductName(dto.productName());
-        product.setDescription(dto.description());
-        product.setPrice(dto.price());
-        product.setAvailable(true);
+    // 2. Lógica para Buscar producto por ID (GET) - Mapeo inline directo sin método separado
+    @Transactional(readOnly = true)
+    public ProductDTO getProductById(Long id) {
+        Product p = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id));
 
-        // Buscamos la categoría en la BD usando el ID enviado desde Angular
+        return new ProductDTO(
+                p.getId(),
+                p.getProductName(),
+                p.getDescription(),
+                p.getPrice(),
+                p.isAvailable(),
+                p.getCategory().getId(),
+                p.getCategory().getCategoryName()
+        );
+    }
+
+    // 3. Lógica para Registrar Producto (POST)
+    @Transactional
+    public ProductDTO createProduct(ProductSaveDTO dto) {
         Category category = categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + dto.categoryId()));
-        product.setCategory(category);
+                .orElseThrow(() -> new RuntimeException("Categoría inmutable no encontrada: " + dto.categoryId()));
 
-        productRepository.save(product);
+        Product product = new Product(category, dto.productName(), dto.price());
+        product.setDescription(dto.description());
+
+        Product savedProduct = productRepository.save(product);
+
+        return new ProductDTO(
+                savedProduct.getId(),
+                savedProduct.getProductName(),
+                savedProduct.getDescription(),
+                savedProduct.getPrice(),
+                savedProduct.isAvailable(),
+                savedProduct.getCategory().getId(),
+                savedProduct.getCategory().getCategoryName()
+        );
     }
 
-    // 7. Lógica para Editar Producto (PUT)
+    // 4. Lógica para Actualizar Producto (PUT) - Con .save() explícito al final
+    // 1. Cambiamos ProductDTO por void
+    @Transactional
     public void updateProduct(Long id, ProductSaveDTO dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id));
 
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + dto.categoryId()));
+
         product.setProductName(dto.productName());
         product.setDescription(dto.description());
         product.setPrice(dto.price());
-
-        Category category = categoryRepository.findById(dto.categoryId())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
         product.setCategory(category);
 
         productRepository.save(product);
+
+        // ❌ ¡Eliminamos el bloque 'return new ProductDTO(...)' por completo!
     }
 
-    // 8. Lógica para Eliminar Producto (DELETE)
+    // 5. Lógica para Eliminar Producto (DELETE)
+    @Transactional
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Producto no encontrado con ID: " + id);
+            throw new RuntimeException("El producto no existe con ID: " + id);
         }
         productRepository.deleteById(id);
     }
