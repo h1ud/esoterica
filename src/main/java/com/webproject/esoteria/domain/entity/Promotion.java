@@ -2,14 +2,8 @@ package com.webproject.esoteria.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,11 +30,9 @@ public class Promotion {
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal discount;
 
-    @Column(name = "discount_type", nullable = false, length = 10)
-    private String discountType;
-
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String visibility;
+    private Visibility visibility;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
@@ -57,6 +49,7 @@ public class Promotion {
     @Column(name = "create_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createDate;
 
+
     public Promotion() {
     }
 
@@ -64,8 +57,7 @@ public class Promotion {
         this.user = user;
         this.title = title;
         this.discount = discount;
-        this.discountType = discountType;
-        this.visibility = "publica";
+        this.visibility = Visibility.GLOBAL;
         this.isActive = true;
         this.startDate = LocalDateTime.now();
         this.createDate = LocalDateTime.now();

@@ -4,10 +4,8 @@ import com.webproject.esoteria.domain.entity.Visibility;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record PromotionDTO(
-        long id,
-        long userId,
-        String username, // Súper útil para mostrar quién creó la promo en la tabla
+public record PromotionSaveDTO(
+        long userId, // El ID del administrador/usuario logueado que crea la promo
         String title,
         String description,
         BigDecimal discount,
@@ -15,7 +13,5 @@ public record PromotionDTO(
         boolean isActive,
         LocalDateTime startDate,
         LocalDateTime endDate,
-        String imageUrl,
-        LocalDateTime createDate
-) {
-}
+        String imageUrl
+) {}
