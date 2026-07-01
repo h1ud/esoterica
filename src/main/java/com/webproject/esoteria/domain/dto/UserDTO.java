@@ -9,7 +9,7 @@ public record UserDTO (
     String name,
     String lastName,
     Long idRole,
-    String roleName, //
+    String roleName,
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime createDate

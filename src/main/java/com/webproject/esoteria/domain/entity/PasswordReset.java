@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "password_reset") // <-- Nombre de la tabla simplificado
+@Table(name = "password_reset")
 public class PasswordReset {
 
     @Id
@@ -29,7 +29,7 @@ public class PasswordReset {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Constructor vacío a mano para Hibernate
+
     public PasswordReset() {
     }
 

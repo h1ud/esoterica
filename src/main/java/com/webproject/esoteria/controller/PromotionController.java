@@ -25,7 +25,6 @@ public class PromotionController {
         return ResponseEntity.ok(promotionService.getAllPromotions());
     }
 
-    // sin uso
     @GetMapping("/{id}")
     public ResponseEntity<PromotionDTO> getById(@PathVariable long id) {
         return ResponseEntity.ok(promotionService.getPromotionById(id));

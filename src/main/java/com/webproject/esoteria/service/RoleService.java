@@ -25,7 +25,7 @@ public class RoleService {
         }
         return roleRepository.save(role);
     }
-    //no esta en uso
+
     public void deleteRole(Long id) {
         if (!roleRepository.existsById(id)) {
             throw new IllegalArgumentException("El rol con ID " + id + " no existe.");

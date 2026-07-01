@@ -42,7 +42,7 @@ public class PromotionService {
                 .toList();
     }
 
-    //sin uso
+
     @Transactional(readOnly = true)
     public PromotionDTO getPromotionById(long id) {
         Promotion p = promotionRepository.findById(id)

@@ -31,7 +31,6 @@ public class RoleAdminController {
         }
     }
 
-    //no esta en uso
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) {
         try {

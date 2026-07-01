@@ -24,7 +24,6 @@ public class ClientAdminController {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
-    //sin uso
     @GetMapping("/dni/{dni}")
     public ResponseEntity<ClientDTO> getClientByDni(@PathVariable String dni) {
         return ResponseEntity.ok(clientService.getClientByDni(dni));
@@ -44,7 +43,7 @@ public class ClientAdminController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-        clientService.deleteClient(id); // Asegúrate de que el servicio tenga este método
+        clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
 }

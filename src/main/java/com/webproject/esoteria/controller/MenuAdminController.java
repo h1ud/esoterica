@@ -24,7 +24,6 @@ public class MenuAdminController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    //no esta en uso
     @GetMapping("/id/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProductById(id));
@@ -38,7 +37,7 @@ public class MenuAdminController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable Long id, @RequestBody ProductSaveDTO dto) {
         productService.updateProduct(id, dto);
-        return ResponseEntity.noContent().build(); // Devuelve estado 204 sin cuerpo
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
