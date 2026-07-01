@@ -21,13 +21,11 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    // Inyección limpia por Constructor (Como en ClientService)
     public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
 
-    // 1. Lógica para Leer todos los usuarios (GET)
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -43,7 +41,6 @@ public class UserService {
                 .toList();
     }
 
-    // 2. Lógica para Buscar usuario por ID (GET)
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         User u = userRepository.findById(id)
@@ -59,26 +56,23 @@ public class UserService {
         );
     }
 
-    // 3. Lógica para Registrar Usuario (POST)
     public void saveUser(UserSaveDTO dto) {
         Role role = roleRepository.findById(dto.idRole())
-                .orElseThrow(() -> new RuntimeException("El Rol especificado no existe con ID: " + dto.idRole()));
+                .orElseThrow(() -> new RuntimeException("el rol especificado no existe con ID: " + dto.idRole()));
         User user = new User();
         user.setUsername(dto.username());
         user.setName(dto.name());
         user.setLastName(dto.lastName());
         user.setRole(role);
 
-        // Encriptar la contraseña del formulario antes de ir a la BD
         user.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         userRepository.save(user);
     }
 
-    // 4. Lógica para Actualizar Usuario (PUT)
     public void updateUser(Long id, UserSaveDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("usuario no encontrado con ID: " + id));
 
         user.setUsername(dto.username());
         user.setName(dto.name());
@@ -89,16 +83,15 @@ public class UserService {
         }
 
         Role role = roleRepository.findById(dto.idRole())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + dto.idRole()));
+                .orElseThrow(() -> new RuntimeException("rol no encontrado con ID: " + dto.idRole()));
         user.setRole(role);
 
-        userRepository.save(user); // JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
+        userRepository.save(user);
     }
 
-    // 5. Lógica para Eliminar Usuario (DELETE)
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado con ID: " + id);
+            throw new RuntimeException("usuario no encontrado con ID: " + id);
         }
         userRepository.deleteById(id);
     }

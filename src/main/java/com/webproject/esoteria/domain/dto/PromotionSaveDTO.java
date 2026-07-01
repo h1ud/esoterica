@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record PromotionSaveDTO(
-        long userId, // El ID del administrador/usuario logueado que crea la promo
+        long userId,
         String title,
         String description,
         BigDecimal discount,

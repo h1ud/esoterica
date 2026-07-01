@@ -28,31 +28,18 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // 1. ENDPOINT REQUERIDO POR EL DOCENTE (Hardcoded para pruebas rápidas)
-    @PostMapping("/test-auth")
-    public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) {
-        if ("admin".equals(authRequest.getUsername()) && "password".equals(authRequest.getPassword())) {
-            String token = jwtUtil.generateToken(authRequest.getUsername());
-            return ResponseEntity.ok(token);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
 
-    // 2. LOGIN REAL DE LA INTRANET (Unificado, Seguro con BCrypt y JWT Real)
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDto) {
         try {
             System.out.println("=== INTENTO DE LOGIN ===");
             System.out.println("Username recibido: " + loginDto.username());
 
-            // 1. Buscar si el usuario existe
             User user = userRepository.findByUsername(loginDto.username())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado en BD"));
 
             System.out.println("Usuario encontrado en BD: " + user.getUsername());
 
-            // 2. Validar contraseña
             boolean matches = passwordEncoder.matches(loginDto.password(), user.getPasswordHash());
             System.out.println("¿Contraseña coincide?: " + matches);
 
@@ -60,12 +47,10 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
             }
 
-            // 3. Generar el Token JWT REAL
             System.out.println("Intentando generar token con jwtUtil...");
             String token = jwtUtil.generateToken(user.getUsername());
             System.out.println("Token generado con éxito: " + token);
 
-            // 4. Obtener Rol
             String roleName = user.getRole().getRoleName();
             System.out.println("Rol del usuario: " + roleName);
 
@@ -73,10 +58,9 @@ public class AuthController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            // ¡Esto va a pintar el error real en la consola de tu IDE!
-            System.out.println("=== CRASH EN EL LOGIN ===");
+            System.out.println("login crash");
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error interno: " + e.getMessage());
         }
     }
 }

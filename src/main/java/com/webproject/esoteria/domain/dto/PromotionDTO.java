@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record PromotionDTO(
         long id,
         long userId,
-        String username, // Súper útil para mostrar quién creó la promo en la tabla
+        String username,
         String title,
         String description,
         BigDecimal discount,

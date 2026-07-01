@@ -7,6 +7,8 @@ import com.webproject.esoteria.domain.dto.ClientSaveDTO;
 import com.webproject.esoteria.domain.entity.Client;
 import com.webproject.esoteria.repository.ClientRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -17,12 +19,11 @@ public class ClientService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
-    // 1. Lógica para Leer todos los clientes (GET)
+    @Transactional(readOnly = true)
     public List<ClientDTO> getAllClients() {
         return clientRepository.findAll().stream()
                 .map(c -> new ClientDTO(
@@ -35,10 +36,10 @@ public class ClientService {
                 .toList();
     }
 
-    // 2. Lógica para Buscar cliente por ID (GET)
+    @Transactional(readOnly = true)
     public ClientDTO getClientByDni(String dni) {
         Client c = clientRepository.findByDni(dni)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con DNI: " + dni));
+                .orElseThrow(() -> new RuntimeException("cliente no encontrado con DNI: " + dni));
         return new ClientDTO(
                 c.getId(),
                 c.getName(),
@@ -48,23 +49,22 @@ public class ClientService {
         );
     }
 
-    // 3. Lógica para Registrar Cliente (POST)
+    @Transactional
     public void saveClient(ClientSaveDTO dto) {
         Client client = new Client();
         client.setName(dto.name());
         client.setDni(dto.dni());
         client.setBirthdayDate(dto.birthdayDate());
 
-        // Simulación: Aquí encriptarías la contraseña del formulario antes de ir a la BD
         client.setPasswordHash(passwordEncoder.encode(dto.password()));
 
         clientRepository.save(client);
     }
 
-    // 4. Lógica para Actualizar Cliente (PUT)
+    @Transactional
     public void updateClient(Long id, ClientSaveDTO dto) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("cliente no encontrado con ID: " + id));
 
         client.setName(dto.name());
         client.setDni(dto.dni());
@@ -76,12 +76,12 @@ public class ClientService {
             client.setPasswordHash(passwordEncoder.encode(dto.password()));
         }
 
-        clientRepository.save(client);// JpaRepository detecta el ID y hace un UPDATE en vez de INSERT
+        clientRepository.save(client);
     }
-    // 5. Lógica para Eliminar Cliente (DELETE)
+
     public void deleteClient(Long id) {
         if (!clientRepository.existsById(id)) {
-            throw new RuntimeException("Cliente no encontrado con ID: " + id);
+            throw new RuntimeException("cliente no encontrado con ID: " + id);
         }
         clientRepository.deleteById(id);
     }

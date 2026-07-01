@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS "cash_closing" (
     PRIMARY KEY("id")
     );
 
--- Relaciones y Llaves Foráneas (Se mantienen idénticas para respetar la integridad)
+-- relations
 ALTER TABLE "user" ADD FOREIGN KEY("id_role") REFERENCES "role"("id") ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "product" ADD FOREIGN KEY("id_category") REFERENCES "category"("id") ON UPDATE NO ACTION ON DELETE RESTRICT;
 ALTER TABLE "promotion" ADD FOREIGN KEY("id_user") REFERENCES "user"("id") ON UPDATE NO ACTION ON DELETE RESTRICT;

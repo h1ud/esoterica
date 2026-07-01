@@ -22,10 +22,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> {}) // Habilita el soporte para los @CrossOrigin de tus controladores
+                .cors(cors -> {}) //habilita cors
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Permite login y registro
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/password-resets/**").permitAll()//
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -33,8 +34,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
-// Elimina el WebSecurityCustomizer, ya no es necesario si usas permitAll() arriba.
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

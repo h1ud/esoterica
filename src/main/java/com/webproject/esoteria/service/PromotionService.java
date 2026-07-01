@@ -22,7 +22,6 @@ public class PromotionService {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. LISTAR TODAS LAS PROMOCIONES (GET)
     @Transactional(readOnly = true)
     public List<PromotionDTO> getAllPromotions() {
         return promotionRepository.findAll().stream()
@@ -43,7 +42,7 @@ public class PromotionService {
                 .toList();
     }
 
-    // 2. BUSCAR UNA PROMOCIÓN POR ID (GET)
+    //sin uso
     @Transactional(readOnly = true)
     public PromotionDTO getPromotionById(long id) {
         Promotion p = promotionRepository.findById(id)
@@ -65,18 +64,15 @@ public class PromotionService {
         );
     }
 
-    // 3. GUARDAR UNA NUEVA PROMOCIÓN (POST)
     @Transactional
     public void savePromotion(PromotionSaveDTO dto) {
-        // 1. Extraemos el username (ej: "u23239739") directamente del Token JWT autenticado
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. Buscamos al usuario real por su username en lugar de usar el ID del DTO
         User user = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado con username: " + currentUsername));
+                .orElseThrow(() -> new RuntimeException("usuario admin no encontrado " + currentUsername));
 
         Promotion p = new Promotion();
-        p.setUser(user); // 👈 Ahora sí quedará asociado al usuario real
+        p.setUser(user);
         p.setTitle(dto.title());
         p.setDescription(dto.description());
         p.setDiscount(dto.discount());
@@ -89,13 +85,11 @@ public class PromotionService {
         promotionRepository.save(p);
     }
 
-    // 4. ACTUALIZAR UNA PROMOCIÓN (PUT)
     @Transactional
     public void updatePromotion(long id, PromotionSaveDTO dto) {
         Promotion p = promotionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promoción no encontrada con ID: " + id));
 
-        // Hacemos lo mismo para el Update, así garantizamos consistencia si re-guarda el creador
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado con username: " + currentUsername));
@@ -113,7 +107,6 @@ public class PromotionService {
         promotionRepository.save(p);
     }
 
-    // 5. ELIMINAR UNA PROMOCIÓN (DELETE)
     @Transactional
     public void deletePromotion(long id) {
         if (!promotionRepository.existsById(id)) {

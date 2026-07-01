@@ -20,13 +20,11 @@ public class ProductService {
     @Autowired
     private final CategoryRepository categoryRepository;
 
-    // Constructor para la inyección de dependencias igual a tu ClientService
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    // 1. Lógica para Leer todos los productos (GET) - Con @Transactional(readOnly = true) por rendimiento
     @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -42,11 +40,10 @@ public class ProductService {
                 .toList();
     }
 
-    // 2. Lógica para Buscar producto por ID (GET) - Mapeo inline directo sin método separado
     @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Product p = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("producto no encontrado con ID: " + id));
 
         return new ProductDTO(
                 p.getId(),
@@ -59,7 +56,6 @@ public class ProductService {
         );
     }
 
-    // 3. Lógica para Registrar Producto (POST)
     @Transactional
     public ProductDTO createProduct(ProductSaveDTO dto) {
         Category category = categoryRepository.findById(dto.categoryId())
@@ -81,8 +77,6 @@ public class ProductService {
         );
     }
 
-    // 4. Lógica para Actualizar Producto (PUT) - Con .save() explícito al final
-    // 1. Cambiamos ProductDTO por void
     @Transactional
     public void updateProduct(Long id, ProductSaveDTO dto) {
         Product product = productRepository.findById(id)
@@ -97,11 +91,8 @@ public class ProductService {
         product.setCategory(category);
 
         productRepository.save(product);
-
-        // ❌ ¡Eliminamos el bloque 'return new ProductDTO(...)' por completo!
     }
 
-    // 5. Lógica para Eliminar Producto (DELETE)
     @Transactional
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {

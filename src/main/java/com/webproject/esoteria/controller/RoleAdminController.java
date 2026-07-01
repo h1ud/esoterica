@@ -16,13 +16,11 @@ public class RoleAdminController {
     @Autowired
     private RoleService roleService;
 
-    // 1. LISTAR ROLES
     @GetMapping
     public ResponseEntity<List<Role>> listRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
     }
 
-    // 2. CREAR ROL
     @PostMapping
     public ResponseEntity<?> createRole(@RequestBody Role role) {
         try {
@@ -33,12 +31,12 @@ public class RoleAdminController {
         }
     }
 
-    // 3. BORRAR ROL
+    //no esta en uso
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Long id) {
         try {
             roleService.deleteRole(id);
-            return ResponseEntity.noContent().build(); // Devuelve 24 No Content si se borra con éxito
+            return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

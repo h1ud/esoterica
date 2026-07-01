@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/*@PreAuthorize("hasRole('ADMIN')") implementar para el control de roles */
 @RestController
 @RequestMapping("/api/admin/users")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -15,7 +16,6 @@ public class UserAdminController {
 
     private final UserService userService;
 
-    // Inyección limpia por Constructor (Igual que ClientAdminController)
     public UserAdminController(UserService userService) {
         this.userService = userService;
     }
@@ -25,6 +25,8 @@ public class UserAdminController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    //user status
+    //sin uso
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));

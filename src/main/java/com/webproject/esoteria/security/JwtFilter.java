@@ -25,7 +25,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        // Si va a /api/auth/login o /auth, salta el filtro por completo
         return path.startsWith("/api/auth/") || path.equals("/auth");
     }
 
@@ -43,7 +42,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Usamos la nueva implementación profesional para obtener el UserDetails
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt)) {

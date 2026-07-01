@@ -19,31 +19,29 @@ public class ClientAdminController {
         this.clientService = clientService;
     }
 
-    // 1. LEER TODO (GET) -> Llena la tabla de clientes en Angular
     @GetMapping
     public ResponseEntity<List<ClientDTO>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
+    //sin uso
     @GetMapping("/dni/{dni}")
     public ResponseEntity<ClientDTO> getClientByDni(@PathVariable String dni) {
         return ResponseEntity.ok(clientService.getClientByDni(dni));
     }
 
-    // 3. CREAR (POST) -> Conectado al Formulario "Registrar Cliente"
     @PostMapping
     public ResponseEntity<Void> createClient(@RequestBody ClientSaveDTO dto) {
         clientService.saveClient(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    // 4. ACTUALIZAR (PUT) -> Conectado al Formulario "Editar Cliente"
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateClient(@PathVariable Long id, @RequestBody ClientSaveDTO dto) {
         clientService.updateClient(id, dto);
         return ResponseEntity.noContent().build();
     }
-    // 5. ELIMINAR (DELETE) -> Conectado al botón "Eliminar" en Angular
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         clientService.deleteClient(id); // Asegúrate de que el servicio tenga este método
