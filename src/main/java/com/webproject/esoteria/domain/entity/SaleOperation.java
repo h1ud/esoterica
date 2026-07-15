@@ -2,14 +2,10 @@ package com.webproject.esoteria.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,6 +48,9 @@ public class SaleOperation {
 
     @Column(name = "issue_date", nullable = false)
     private LocalDateTime issueDate;
+
+    @OneToMany(mappedBy = "saleOperation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleDetail> details = new ArrayList<>();
 
     public SaleOperation() {
     }
