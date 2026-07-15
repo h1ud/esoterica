@@ -1,5 +1,6 @@
 package com.webproject.esoteria.service;
 
+import com.webproject.esoteria.domain.dto.CategoryDTO;
 import com.webproject.esoteria.domain.dto.ProductDTO;
 import com.webproject.esoteria.domain.dto.ProductSaveDTO;
 import com.webproject.esoteria.domain.entity.Category;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 public class ProductService {
+
 
     @Autowired
     private final ProductRepository productRepository;
@@ -99,5 +101,31 @@ public class ProductService {
             throw new RuntimeException("El producto no existe con ID: " + id);
         }
         productRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getProductsByCategory(Long categoryId) {
+        return productRepository.findByCategory_IdAndIsAvailableTrue(categoryId).stream()
+                .map(p -> new ProductDTO(
+                        p.getId(),
+                        p.getProductName(),
+                        p.getDescription(),
+                        p.getPrice(),
+                        p.isAvailable(),
+                        p.getCategory().getId(),
+                        p.getCategory().getCategoryName()
+                ))
+                .toList();
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(c -> new CategoryDTO(
+                        c.getId(),
+                        c.getCategoryName(),
+                        c.getDescription()
+                ))
+                .toList();
     }
 }

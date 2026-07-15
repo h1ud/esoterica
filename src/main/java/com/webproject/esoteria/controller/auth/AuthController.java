@@ -32,7 +32,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDto) {
         try {
-            System.out.println("=== INTENTO DE LOGIN ===");
             System.out.println("Username recibido: " + loginDto.username());
 
             User user = userRepository.findByUsername(loginDto.username())
@@ -48,7 +47,7 @@ public class AuthController {
             }
 
             System.out.println("Intentando generar token con jwtUtil...");
-            String token = jwtUtil.generateToken(user.getUsername());
+            String token = jwtUtil.generateToken(user.getUsername(), user.getRole().getRoleName());
             System.out.println("Token generado con éxito: " + token);
 
             String roleName = user.getRole().getRoleName();
@@ -58,7 +57,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            System.out.println("login crash");
+            System.out.println("login fail");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error interno: " + e.getMessage());
         }
