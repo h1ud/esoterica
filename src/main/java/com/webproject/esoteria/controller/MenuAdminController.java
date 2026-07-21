@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/admin/products")
 @CrossOrigin(origins = "http://localhost:4200")
 @PreAuthorize("hasRole('ADMIN')")
 public class MenuAdminController {

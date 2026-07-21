@@ -3,6 +3,7 @@ package com.webproject.esoteria.service;
 import com.webproject.esoteria.domain.dto.SaleFinalyResponse;
 import com.webproject.esoteria.domain.dto.SaleItemRequestDTO;
 import com.webproject.esoteria.domain.dto.SaleRequestDTO;
+import com.webproject.esoteria.domain.dto.SaleResponseDTO;
 import com.webproject.esoteria.domain.entity.*;
 import com.webproject.esoteria.repository.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -38,7 +41,9 @@ public class SaleOperationService {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        SaleOperation sale = new SaleOperation(user, request.paymentMethod());
+        // Normalizar paymentMethod a minúsculas para que cumpla con el CHECK constraint de la BD
+        String paymentMethod = request.paymentMethod() != null ? request.paymentMethod().toLowerCase() : "efectivo";
+        SaleOperation sale = new SaleOperation(user, paymentMethod);
         BigDecimal totalCalculado = BigDecimal.ZERO;
 
         for (SaleItemRequestDTO itemDto : request.items()) {
@@ -72,4 +77,33 @@ public class SaleOperationService {
                 savedSale.getIssueDate()
         );
     }
-}
+
+    public List<SaleResponseDTO> getRecentSales() {
+        List<SaleOperation> sales = saleOperationRepository.findAllByOrderByIssueDateDesc();
+        return sales.stream()
+                .map(this::toSaleResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private SaleResponseDTO toSaleResponseDTO(SaleOperation sale) {
+        List<SaleResponseDTO.SaleItemResponseDTO> itemDTOs = sale.getDetails().stream()
+                .map(detail -> new SaleResponseDTO.SaleItemResponseDTO(
+                        detail.getId(),
+                        detail.getProduct().getProductName(),
+                        detail.getQuantity(),
+                        detail.getUnitPrice(),
+                        detail.getSubtotal()
+                ))
+                .collect(Collectors.toList());
+
+        return new SaleResponseDTO(
+                sale.getId(),
+                sale.getUser().getUsername(),
+                sale.getPaymentMethod(),
+                sale.getPaymentStatus(),
+                sale.getSubtotal(),
+                sale.getTotal(),
+                sale.getIssueDate(),
+                itemDTOs
+        );
+    }}
