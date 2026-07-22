@@ -37,7 +37,8 @@ public class ProductService {
                         p.getPrice(),
                         p.isAvailable(),
                         p.getCategory().getId(),
-                        p.getCategory().getCategoryName()
+                        p.getCategory().getCategoryName(),
+                        p.getImageUrl()
                 ))
                 .toList();
     }
@@ -54,7 +55,8 @@ public class ProductService {
                 p.getPrice(),
                 p.isAvailable(),
                 p.getCategory().getId(),
-                p.getCategory().getCategoryName()
+                p.getCategory().getCategoryName(),
+                p.getImageUrl()
         );
     }
 
@@ -65,6 +67,7 @@ public class ProductService {
 
         Product product = new Product(category, dto.productName(), dto.price());
         product.setDescription(dto.description());
+        product.setImageUrl(dto.imageUrl());
 
         Product savedProduct = productRepository.save(product);
 
@@ -75,7 +78,8 @@ public class ProductService {
                 savedProduct.getPrice(),
                 savedProduct.isAvailable(),
                 savedProduct.getCategory().getId(),
-                savedProduct.getCategory().getCategoryName()
+                savedProduct.getCategory().getCategoryName(),
+                savedProduct.getImageUrl()
         );
     }
 
@@ -91,6 +95,7 @@ public class ProductService {
         product.setDescription(dto.description());
         product.setPrice(dto.price());
         product.setCategory(category);
+        product.setImageUrl(dto.imageUrl());
 
         productRepository.save(product);
     }
@@ -113,7 +118,8 @@ public class ProductService {
                         p.getPrice(),
                         p.isAvailable(),
                         p.getCategory().getId(),
-                        p.getCategory().getCategoryName()
+                        p.getCategory().getCategoryName(),
+                        p.getImageUrl()
                 ))
                 .toList();
     }

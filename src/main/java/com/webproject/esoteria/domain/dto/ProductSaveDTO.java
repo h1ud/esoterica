@@ -17,6 +17,8 @@ public record ProductSaveDTO(
         BigDecimal price,
 
         @NotNull
-        Long categoryId
+        Long categoryId,
+
+        String imageUrl
 ) {
 }

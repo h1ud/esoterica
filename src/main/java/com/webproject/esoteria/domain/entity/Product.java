@@ -40,6 +40,9 @@ public class Product {
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     public Product() {
     }
 

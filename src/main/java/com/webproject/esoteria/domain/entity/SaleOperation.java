@@ -34,6 +34,21 @@ public class SaleOperation {
     @Column(name = "payment_status", nullable = false, length = 15)
     private String paymentStatus;
 
+    @Column(name = "document_type", length = 15)
+    private String documentType;
+
+    @Column(name = "client_dni", length = 15)
+    private String clientDni;
+
+    @Column(name = "client_name", length = 150)
+    private String clientName;
+
+    @Column(name = "client_business_name", length = 200)
+    private String clientBusinessName;
+
+    @Column(name = "client_address", length = 255)
+    private String clientAddress;
+
     @Column(length = 255)
     private String notes;
 

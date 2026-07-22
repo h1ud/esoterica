@@ -32,4 +32,16 @@ public class SaleOperationController {
         List<SaleResponseDTO> sales = saleOperationService.getRecentSales();
         return ResponseEntity.ok(sales);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSale(@PathVariable Long id) {
+        try {
+            saleOperationService.deleteSale(id);
+            return ResponseEntity.ok(java.util.Map.of("message", "Venta eliminada correctamente"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

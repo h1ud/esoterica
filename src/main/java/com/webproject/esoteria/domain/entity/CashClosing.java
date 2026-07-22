@@ -37,6 +37,9 @@ public class CashClosing {
     @Column(name = "total_yape_plin", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalYapePlin;
 
+    @Column(name = "total_tarjeta", precision = 12, scale = 2)
+    private BigDecimal totalTarjeta;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
 
@@ -50,11 +53,14 @@ public class CashClosing {
     public CashClosing() {
     }
 
-    public CashClosing(User user, BigDecimal totalEfectivo, BigDecimal totalYapePlin) {
-        this.user = user;
-        this.totalEfectivo = totalEfectivo;
-        this.totalYapePlin = totalYapePlin;
-        this.total = totalEfectivo.add(totalYapePlin);
-        this.emissionDate = LocalDateTime.now();
-    }
+  public CashClosing(User user, BigDecimal totalEfectivo, BigDecimal totalYapePlin, BigDecimal totalTarjeta) {
+    this.user = user;
+    this.totalEfectivo = totalEfectivo != null ? totalEfectivo : BigDecimal.ZERO;
+    this.totalYapePlin = totalYapePlin != null ? totalYapePlin : BigDecimal.ZERO;
+    this.totalTarjeta = totalTarjeta != null ? totalTarjeta : BigDecimal.ZERO;
+
+    // Suma segura de todos los campos
+    this.total = this.totalEfectivo.add(this.totalYapePlin).add(this.totalTarjeta);
+    this.emissionDate = LocalDateTime.now();
+  }
 }

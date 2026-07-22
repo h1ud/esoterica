@@ -14,10 +14,12 @@ public class JwtUtil {
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, String role, String name, String lastName) {
         return Jwts.builder()
-                .setSubject(username) //agregar role y un gato saludo
+                .setSubject(username)
                 .claim("role", role)
+                .claim("name", name)
+                .claim("lastName", lastName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)

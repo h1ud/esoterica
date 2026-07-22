@@ -26,7 +26,7 @@ public class ClientAdminController {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
-    //sin uso
+
     @GetMapping("/dni/{dni}")
     public ResponseEntity<ClientDTO> getClientByDni(@PathVariable String dni) {
         return ResponseEntity.ok(clientService.getClientByDni(dni));

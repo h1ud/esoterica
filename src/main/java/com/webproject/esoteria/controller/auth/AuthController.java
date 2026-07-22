@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth") // <-- Agrupamos bajo una ruta limpia y semántica
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
@@ -47,7 +47,7 @@ public class AuthController {
             }
 
             System.out.println("Intentando generar token con jwtUtil...");
-            String token = jwtUtil.generateToken(user.getUsername(), user.getRole().getRoleName());
+            String token = jwtUtil.generateToken(user.getUsername(), user.getRole().getRoleName(), user.getName(), user.getLastName());
             System.out.println("Token generado con éxito: " + token);
 
             String roleName = user.getRole().getRoleName();

@@ -21,6 +21,9 @@ public class Promotion {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
+    @Column(nullable = false, unique = true, length = 30)
+    private String code;
+
     @Column(nullable = false, length = 150)
     private String title;
 
@@ -53,8 +56,9 @@ public class Promotion {
     public Promotion() {
     }
 
-    public Promotion(User user, String title, BigDecimal discount, String discountType) {
+    public Promotion(User user, String code, String title, BigDecimal discount) {
         this.user = user;
+        this.code = code;
         this.title = title;
         this.discount = discount;
         this.visibility = Visibility.GLOBAL;

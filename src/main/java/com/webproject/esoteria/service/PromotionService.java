@@ -29,6 +29,7 @@ public class PromotionService {
                         p.getId(),
                         p.getUser().getId(),
                         p.getUser().getUsername(),
+                        p.getCode(),
                         p.getTitle(),
                         p.getDescription(),
                         p.getDiscount(),
@@ -52,6 +53,7 @@ public class PromotionService {
                 p.getId(),
                 p.getUser().getId(),
                 p.getUser().getUsername(),
+                p.getCode(),
                 p.getTitle(),
                 p.getDescription(),
                 p.getDiscount(),
@@ -71,8 +73,14 @@ public class PromotionService {
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("usuario admin no encontrado " + currentUsername));
 
+        // Validar que el código no exista
+        if (promotionRepository.findByCode(dto.code()).isPresent()) {
+            throw new RuntimeException("Ya existe una promoción con el código: " + dto.code());
+        }
+
         Promotion p = new Promotion();
         p.setUser(user);
+        p.setCode(dto.code().toUpperCase());
         p.setTitle(dto.title());
         p.setDescription(dto.description());
         p.setDiscount(dto.discount());
@@ -90,11 +98,20 @@ public class PromotionService {
         Promotion p = promotionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promoción no encontrada con ID: " + id));
 
+        // Validar que el código no exista ya en otra promoción
+        String newCode = dto.code().toUpperCase();
+        if (!p.getCode().equals(newCode)) {
+            promotionRepository.findByCode(newCode).ifPresent(existing -> {
+                throw new RuntimeException("Ya existe otra promoción con el código: " + newCode);
+            });
+        }
+
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Usuario creador no encontrado con username: " + currentUsername));
 
         p.setUser(user);
+        p.setCode(newCode);
         p.setTitle(dto.title());
         p.setDescription(dto.description());
         p.setDiscount(dto.discount());
@@ -113,5 +130,35 @@ public class PromotionService {
             throw new RuntimeException("La promoción no existe con ID: " + id);
         }
         promotionRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public PromotionDTO getPromotionByCode(String code) {
+        Promotion p = promotionRepository.findByCode(code.toUpperCase())
+                .orElseThrow(() -> new RuntimeException("Código promocional no válido: " + code));
+
+        if (!p.isActive()) {
+            throw new RuntimeException("La promoción " + code + " no está activa");
+        }
+
+        if (p.getEndDate() != null && p.getEndDate().isBefore(java.time.LocalDateTime.now())) {
+            throw new RuntimeException("La promoción " + code + " ha expirado");
+        }
+
+        return new PromotionDTO(
+                p.getId(),
+                p.getUser().getId(),
+                p.getUser().getUsername(),
+                p.getCode(),
+                p.getTitle(),
+                p.getDescription(),
+                p.getDiscount(),
+                p.getVisibility(),
+                p.isActive(),
+                p.getStartDate(),
+                p.getEndDate(),
+                p.getImageUrl(),
+                p.getCreateDate()
+        );
     }
 }

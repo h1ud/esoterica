@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "password_reset") // <-- Nombre de la tabla simplificado
+@Table(name = "password_reset")
 public class PasswordReset {
 
     @Id

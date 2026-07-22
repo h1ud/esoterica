@@ -8,6 +8,7 @@ public record PromotionDTO(
         long id,
         long userId,
         String username,
+        String code,
         String title,
         String description,
         BigDecimal discount,

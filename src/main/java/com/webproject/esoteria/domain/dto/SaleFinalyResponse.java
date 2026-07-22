@@ -6,7 +6,10 @@ import java.time.LocalDateTime;
 public record SaleFinalyResponse(
         Long saleOperationId,
         String paymentStatus,
+        BigDecimal subtotal,
+        BigDecimal discountAmount,
         BigDecimal totalAmount,
-        LocalDateTime issueDate
+        LocalDateTime issueDate,
+        String documentType
 ) {
 }

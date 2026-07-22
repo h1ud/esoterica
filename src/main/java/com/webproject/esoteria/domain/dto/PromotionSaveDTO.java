@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public record PromotionSaveDTO(
         long userId,
+        String code,
         String title,
         String description,
         BigDecimal discount,

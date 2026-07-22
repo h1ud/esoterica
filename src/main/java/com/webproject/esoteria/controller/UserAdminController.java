@@ -27,8 +27,7 @@ public class UserAdminController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    //user status
-    //sin uso
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));

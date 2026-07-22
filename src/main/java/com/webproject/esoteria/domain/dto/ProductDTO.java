@@ -9,6 +9,7 @@ public record ProductDTO(
         BigDecimal price,
         boolean isAvailable,
         Long categoryId,
-        String categoryName
+        String categoryName,
+        String imageUrl
 ) {
 }
